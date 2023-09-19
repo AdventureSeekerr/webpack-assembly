@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack')
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
@@ -75,7 +76,7 @@ module.exports = {
     output: {
         filename: `./js/${filename('js')}`,
         path: path.resolve(__dirname, 'dist'),
-        assetModuleFilename: `./img/${filename('[ext]')}`,
+        assetModuleFilename: `./images/${filename('[ext]')}`,
         publicPath: ''
     },
     devServer: {
@@ -107,6 +108,7 @@ module.exports = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
+                            //hmr: true,
                             publicPath: (resourcePath, context) => {
                                 return path.relative(path.dirname(resourcePath), context) + '/';
                             },
@@ -119,6 +121,13 @@ module.exports = {
             {
                 test: /\.(jpg|png|svg|jpeg|gif)$/,
                 type: 'asset/resource'
+            },
+            {
+                test: /\.(?:|woff2)$/,
+                type: 'asset/resource',
+                generator: {
+					filename: 'fonts/[name].[hash][ext]'
+				}
             },
             {
                 test: /\.js$/,
